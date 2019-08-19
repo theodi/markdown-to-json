@@ -1,5 +1,17 @@
 # Markdown to JSON converter
 
+## What does this fork do differently
+
+* texty values may now contain lists
+* lists are not treated as arrays but instead retained as markdown formatted lists, as a string
+
+### TODO
+
+* 'list' behaviour should be configurable based on a flag
+* test whether nested lists still work
+
+# Amended original documentation below
+
 ## Description
 
 A simple tool to convert Markdown (technically CommonMark) data into JSON. It uses headings as JSON keys, and the stuff following headings as values. Lists are turned into arrays. Higher heading values yield nested JSON keys.
@@ -58,7 +70,10 @@ The markdown:
 ```
 # Description
 
-This is an example file
+This is an example file with a list in it
+
+* item 1
+* item 2
 
 # Authors
 
@@ -82,8 +97,8 @@ will translate to the JSON:
 
 ```
 {
-  "Description": "This is an example file",
-  "Authors": ["Nate Vack", "Vendor Packages", ["docopt", "CommonMark-py"]],
+  "Description": "This is an example file with a list in it\n* item \n* item 2\n",
+  "Authors": {"* Nate Vack\n* Vendor Packages\n    * docopt\n    * CommonMark-py"},
   "Versions": {
     "Version 1": "Here's something about Version 1; I said \"Hooray!\"",
     "Version 2": "Here's something about Version 2"

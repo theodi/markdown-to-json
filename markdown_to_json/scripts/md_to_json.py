@@ -69,6 +69,7 @@ def jsonify_markdown(markdown_file, outfile, indent):
     renderer = Renderer()
     with writable_io_or_stdout(outfile) as f:
         ast = get_markdown_ast(markdown_file)
+        #         logging.error(CommonMark.dumpAST(ast))
         nested = nester.nest(ast)
         rendered = renderer.stringify_dict(nested)
         json.dump(rendered, f, indent=indent)

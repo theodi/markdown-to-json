@@ -10,6 +10,8 @@ import operator
 
 from .vendor.ordereddict import OrderedDict
 
+from markdown_to_json.vendor import CommonMark
+
 """
 This module contains a class to change a CommonMark.py AST into a nested
 OrderedDict structure. Its rules:
@@ -63,7 +65,7 @@ class CMarkASTNester(object):
             return block.t == 'ATXHeader' and block.level == heading_level
 
         if not any((matches_heading(b) for b in blocks)):
-            self._ensure_list_singleton(blocks)
+            #             self._ensure_list_singleton(blocks)
             return blocks
 
         splitted = dictify_list_by(blocks, matches_heading)
@@ -122,6 +124,7 @@ class Renderer(object):
         first = cm_vals[0]
         if first.t == 'List':
             return self._render_List(first)
+        #         print(CommonMark.dumpAST(cm_vals))
         return "\n\n".join([self._render_block(v) for v in cm_vals])
 
     def _render_block(self, block):
@@ -141,7 +144,13 @@ class Renderer(object):
         # We need to de-nest this one level -- we'll use the trick that
         # lists can be added to do this.
         list_items = [self._render_block(li) for li in block.children]
-        return reduce(operator.add, list_items)
+        markdown_list = self._prepend(reduce(operator.add, list_items), "* ")
+        return "\n".join(markdown_list)
+
+    def _prepend(self, list, str):
+        str += '% s'
+        list = [str % i for i in list]
+        return(list)
 
     def _render_FencedCode(self, block):
         return "```\n" + block.string_content + "```"
